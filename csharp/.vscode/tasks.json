@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "quick-build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}${pathSeparator}AdventOfCode${pathSeparator}AdventOfCode.csproj"
+			],
+			"group": "build",
+			"problemMatcher": "$msCompile",
+		},
+		{
+			"label": "build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}${pathSeparator}AdventOfCode${pathSeparator}AdventOfCode.csproj"
+			],
+			"group": "build",
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"clean"
+			]
+		},
+		{
+			"label": "clean",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"clean",
+				"${workspaceFolder}${pathSeparator}AdventOfCode${pathSeparator}AdventOfCode.csproj"
+			],
+			"group": "build"
+		}
+	]
+}
