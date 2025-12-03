@@ -34,7 +34,6 @@ namespace AdventOfCode.Models
 		{
 			return $"Start: {Start}, End: {End}, Count={1 + End - Start}";
 		}
-
 #endif
 	}
 }
