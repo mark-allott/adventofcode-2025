@@ -17,7 +17,7 @@ namespace AdventOfCode.Challenges.Day04
 		/// <inheritdoc />
 		void IPartOneTest.Test()
 		{
-			var actual = SolvePartOne(PartOneTestData);
+			var actual = SolvePartOne(_partOneTestData);
 			Debug.Assert(actual == PartOneExpected);
 		}
 
@@ -69,7 +69,7 @@ namespace AdventOfCode.Challenges.Day04
 			return GetNeighbours(input).Count(c => c.neighbours < 4);
 		}
 
-		private readonly List<string> PartOneTestData =
+		private readonly List<string> _partOneTestData =
 		[
 			"..@@.@@@@.",
 			"@@@.@.@.@@",
