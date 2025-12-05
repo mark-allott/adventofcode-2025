@@ -26,23 +26,23 @@ namespace AdventOfCode.Extensions
 			/// <exception cref="ArgumentException"></exception>
 			public List<int> ParseEnumerableOfStringToListOfInt(int rowNumber = 0)
 			{
-				var counter = 1;
-				var rowValues = new List<int>();
-				var strings = input as string[] ?? [];
+				var strings = (input ?? Enumerable.Empty<string>()).ToList();
+				var counter = rowNumber;
 
-				foreach (var part in strings)
-				{
-					if (!int.TryParse(part, out var v))
-					{
-						var message = $"Data error with line {(rowNumber != 0 ? $"{rowNumber}" : $"{string.Join(',', strings)}")} and part #{counter} => '{part}'";
-						throw new ArgumentException(message);
-					}
+				var conversions = strings
+					.Select(s => new { Good = int.TryParse(s, out var v), Value = v, Counter = counter++, Input = s })
+					.ToList();
 
-					counter++;
-					rowValues.Add(v);
-				}
+				//	If all good, return the list of converted values
+				if (conversions.All(c => c.Good))
+					return conversions.OrderBy(o => o.Counter).Select(s => s.Value).ToList();
 
-				return rowValues;
+				//	Report the errors
+				var errors = conversions
+					.Where(c => !c.Good)
+					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "Part" : "Row")}# {1 + c.Counter} contains '{c.Input}' which is not a valid int"))
+					.ToList();
+				throw new AggregateException($"{nameof(ParseEnumerableOfStringToListOfInt)} reports conversion errors", errors);
 			}
 
 			/// <summary>
@@ -58,15 +58,15 @@ namespace AdventOfCode.Extensions
 				{
 					if (string.IsNullOrWhiteSpace(line))
 					{
-						if (section.Count > 0)
-						{
-							result.Add(section);
-							section = new List<string>();
-						}
+						if (section.Count == 0)
+							continue;
+						result.Add(section);
+						section = [];
 					}
 					else
 						section.Add(line);
 				}
+
 				if (section.Count > 0)
 					result.Add(section);
 
@@ -79,10 +79,37 @@ namespace AdventOfCode.Extensions
 			/// <returns>A list of lists of integer parts</returns>
 			public List<List<int>> ParseEnumerableOfStringToListOfListOfInt(int rowNumber = 0)
 			{
-				var strings = input as string[] ?? [];
+				var strings = (input ?? Enumerable.Empty<string>()).ToList();
 
 				return strings.Select(line => line.ParseStringToListOfInt(++rowNumber))
 					.ToList();
+			}
+
+			/// <summary>
+			/// Parse the input into a list of long integer values. One value per row
+			/// </summary>
+			/// <param name="rowNumber">(Optional) specifies the row number in a file</param>
+			/// <returns>The list of long integer parts</returns>
+			/// <exception cref="ArgumentException"></exception>
+			public List<long> ParseEnumerableOfStringToListOfLong(int rowNumber = 0)
+			{
+				var strings = (input ?? Enumerable.Empty<string>()).ToList();
+				var counter = rowNumber;
+
+				var conversions = strings
+					.Select(s => new { Good = long.TryParse(s, out var v), Value = v, Counter = counter++, Input = s })
+					.ToList();
+
+				//	If all good, return the list of converted values
+				if (conversions.All(c => c.Good))
+					return conversions.OrderBy(o => o.Counter).Select(s => s.Value).ToList();
+
+				//	Report the errors
+				var errors = conversions
+					.Where(c => !c.Good)
+					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "Part" : "Row")}# {1 + c.Counter} contains '{c.Input}' which is not a valid long"))
+					.ToList();
+				throw new AggregateException($"{nameof(ParseEnumerableOfStringToListOfLong)} reports conversion errors", errors);
 			}
 		}
 	}
