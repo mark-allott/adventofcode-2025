@@ -29,6 +29,11 @@ namespace AdventOfCode.Models
 			End = long.Parse(parts[1]);
 		}
 
+		public bool Contains(long number)
+		{
+			return number >= Start && number <= End;
+		}
+
 #if DEBUG
 		public override string ToString()
 		{
