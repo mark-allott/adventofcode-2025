@@ -107,9 +107,22 @@ namespace AdventOfCode.Extensions
 				//	Report the errors
 				var errors = conversions
 					.Where(c => !c.Good)
-					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "Part" : "Row")}# {1 + c.Counter} contains '{c.Input}' which is not a valid long"))
+					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "" : $"Row# {rowNumber}, ")}Part# {1 + c.Counter} contains '{c.Input}' which is not a valid long"))
 					.ToList();
 				throw new AggregateException($"{nameof(ParseEnumerableOfStringToListOfLong)} reports conversion errors", errors);
+			}
+
+			/// <summary>
+			/// Iterate over <paramref name="input"/>, splitting each line into a list of long values
+			/// </summary>
+			/// <returns>A list of lists of <see cref="long"/> parts</returns>
+			public List<List<long>> ParseEnumerableOfStringToListOfListOfLong(int rowNumber = 0)
+			{
+				var strings = (input ?? Enumerable.Empty<string>()).ToList();
+
+				return strings
+					.Select(line => line.ParseStringToListOfLong(rowNumber == 0 ? 0 : ++rowNumber))
+					.ToList();
 			}
 		}
 	}
