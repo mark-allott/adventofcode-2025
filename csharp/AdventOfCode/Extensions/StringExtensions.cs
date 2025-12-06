@@ -2,17 +2,33 @@ namespace AdventOfCode.Extensions
 {
 	public static class StringExtensions
 	{
-		/// <summary>
-		/// Parse the input into a list of integer values. Values can be separated by spaces or commas
-		/// </summary>
 		/// <param name="line">The string to parse</param>
-		/// <param name="rowNumber">(Optional) specifies the row number in a file</param>
-		/// <returns>The list of integer parts</returns>
-		/// <exception cref="ArgumentException"></exception>
-		public static List<int> ParseStringToListOfInt(this string line, int rowNumber = 0)
+		extension(string line)
 		{
-			var parts = line.Split([' ', ','], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-			return parts.ParseEnumerableOfStringToListOfInt(rowNumber);
+			/// <summary>
+			/// Parse the input into a list of integer values. Values can be separated by spaces or commas
+			/// </summary>
+			/// <param name="rowNumber">(Optional) specifies the row number in a file</param>
+			/// <returns>The list of integer parts</returns>
+			/// <exception cref="ArgumentException"></exception>
+			public List<int> ParseStringToListOfInt(int rowNumber = 0)
+			{
+				var parts = line.Split([' ', ','],
+					StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+				return parts.ParseEnumerableOfStringToListOfInt(rowNumber);
+			}
+
+			/// <summary>
+			/// Parse the input into a list of long integer values. Values can be separated by spaces or commas
+			/// </summary>
+			/// <param name="rowNumber">(Optional) specifies the row number in a file</param>
+			/// <returns>The list of long integer parts</returns>
+			public List<long> ParseStringToListOfLong(int rowNumber = 0)
+			{
+				var parts = line.Split([' ', ','],
+					StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+				return parts.ParseEnumerableOfStringToListOfLong(rowNumber);
+			}
 		}
 
 		/// <param name="input">The list of strings to parse</param>
@@ -94,7 +110,7 @@ namespace AdventOfCode.Extensions
 			public List<long> ParseEnumerableOfStringToListOfLong(int rowNumber = 0)
 			{
 				var strings = (input ?? Enumerable.Empty<string>()).ToList();
-				var counter = rowNumber;
+				var counter = 1;
 
 				var conversions = strings
 					.Select(s => new { Good = long.TryParse(s, out var v), Value = v, Counter = counter++, Input = s })
@@ -107,7 +123,7 @@ namespace AdventOfCode.Extensions
 				//	Report the errors
 				var errors = conversions
 					.Where(c => !c.Good)
-					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "" : $"Row# {rowNumber}, ")}Part# {1 + c.Counter} contains '{c.Input}' which is not a valid long"))
+					.Select(c => new ArgumentException($"{(rowNumber == 0 ? "" : $"Row# {rowNumber}, ")}Part# {c.Counter} contains '{c.Input}' which is not a valid long"))
 					.ToList();
 				throw new AggregateException($"{nameof(ParseEnumerableOfStringToListOfLong)} reports conversion errors", errors);
 			}
@@ -121,7 +137,7 @@ namespace AdventOfCode.Extensions
 				var strings = (input ?? Enumerable.Empty<string>()).ToList();
 
 				return strings
-					.Select(line => line.ParseStringToListOfLong(rowNumber == 0 ? 0 : ++rowNumber))
+					.Select(line => line.ParseStringToListOfLong(rowNumber == 0 ? 0 : rowNumber++))
 					.ToList();
 			}
 		}
