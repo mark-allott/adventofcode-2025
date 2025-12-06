@@ -29,6 +29,20 @@ namespace AdventOfCode.Extensions
 					StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 				return parts.ParseEnumerableOfStringToListOfLong(rowNumber);
 			}
+
+			/// <summary>
+			/// Finds the possible split locations in <paramref name="line"/>, using <paramref name="splitChars"/>
+			/// </summary>
+			/// <param name="splitChars">The characters to be used as the split operators</param>
+			/// <returns>A list of possible positions in <paramref name="line"/> where the string can be split into component parts</returns>
+			public List<int> ParseStringToFindSplitPositions(char[] splitChars)
+			{
+				return line.ToCharArray()
+					.Select((c, i) => new { i, c })
+					.Where(q => splitChars.Contains(q.c))
+					.Select(q => q.i)
+					.ToList();
+			}
 		}
 
 		/// <param name="input">The list of strings to parse</param>
