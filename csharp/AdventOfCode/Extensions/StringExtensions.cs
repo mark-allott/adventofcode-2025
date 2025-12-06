@@ -154,6 +154,24 @@ namespace AdventOfCode.Extensions
 					.Select(line => line.ParseStringToListOfLong(rowNumber == 0 ? 0 : rowNumber++))
 					.ToList();
 			}
+
+			/// <summary>
+			/// Locates common split positions in the provided <paramref name="input"/>
+			/// </summary>
+			/// <param name="splitChars">The character(s) to be used for splitting the strings</param>
+			/// <returns>A list of common split positions in the <paramref name="input"/></returns>
+			public List<int> ParseEnumerableOfStringForCommonSplitPositions(char[] splitChars)
+			{
+				var strings = (input ?? Enumerable.Empty<string>()).ToList();
+				if (strings.Count == 0)
+					return Enumerable.Empty<int>().ToList();
+
+				var positions = strings.Select(s => s.ParseStringToFindSplitPositions(splitChars)).ToList();
+				var splitPositions = positions[0];
+				for (var i = 1; i < positions.Count; i++)
+					splitPositions = splitPositions.Intersect(positions[i]).ToList();
+				return splitPositions;
+			}
 		}
 	}
 }
