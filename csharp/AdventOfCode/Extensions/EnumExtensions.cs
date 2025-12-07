@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using AdventOfCode.Enums;
 
 namespace AdventOfCode.Extensions
 {
@@ -18,6 +19,40 @@ namespace AdventOfCode.Extensions
 			return (fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is not DescriptionAttribute[] descriptions || descriptions.Length == 0)
 				? $"{value}"
 				: descriptions[0].Description;
+		}
+
+		/// <summary>
+		/// Converts the <paramref name="input"/> to the equivalent <see cref="TachyonSplitterState"/> value
+		/// </summary>
+		/// <param name="input">The character to convert</param>
+		/// <returns>The <see cref="TachyonSplitterState"/> value</returns>
+		public static TachyonSplitterState ToState(this char input)
+		{
+			return input switch
+			{
+				'S' => TachyonSplitterState.Start,
+				'.' => TachyonSplitterState.Empty,
+				'^' => TachyonSplitterState.Splitter,
+				'|' => TachyonSplitterState.Beam,
+				_ => TachyonSplitterState.Unknown
+			};
+		}
+
+		/// <summary>
+		/// Converts the <paramref name="state"/> into the default characters
+		/// </summary>
+		/// <param name="state">The cell state</param>
+		/// <returns>The character for the state</returns>
+		public static char ToChar(this TachyonSplitterState state)
+		{
+			return state switch
+			{
+				TachyonSplitterState.Start => 'S',
+				TachyonSplitterState.Empty => '.',
+				TachyonSplitterState.Splitter => '^',
+				TachyonSplitterState.Beam => '|',
+				_ => ' '
+			};
 		}
 	}
 }
