@@ -8,6 +8,18 @@ namespace AdventOfCode.Models
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public Coordinate()
+		{
+		}
+
+		/// <summary>
+		/// Alternate constructor; permits direct setting of coordinate values from constructor, rather than init properties
+		/// </summary>
+		/// <param name="x">The location in X for the coordinate</param>
+		/// <param name="y">The location in Y for the coordinate</param>
 		public Coordinate(T x, T y)
 		{
 			X = x;
