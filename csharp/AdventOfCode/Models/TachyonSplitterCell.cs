@@ -3,7 +3,7 @@ using AdventOfCode.Extensions;
 
 namespace AdventOfCode.Models
 {
-	public record TachyonSplitterCell
+	internal record TachyonSplitterCell
 		: Cell<TachyonSplitterState, GridCoordinate, int>
 	{
 		public TachyonSplitterCell(int row, int column, char state)

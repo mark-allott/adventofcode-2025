@@ -3,7 +3,7 @@ using AdventOfCode.Enums;
 
 namespace AdventOfCode.Extensions
 {
-	public static class EnumExtensions
+	internal static class EnumExtensions
 	{
 		/// <summary>
 		/// Extracts the <see cref="DescriptionAttribute"/> from the enum value, if present
@@ -16,7 +16,7 @@ namespace AdventOfCode.Extensions
 			var fi = value.GetType().GetField($"{value}");
 
 			//	Extract [Description("")] values. If found, return first description, or ToString of value
-			return (fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is not DescriptionAttribute[] descriptions || descriptions.Length == 0)
+			return fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is not DescriptionAttribute[] descriptions || descriptions.Length == 0
 				? $"{value}"
 				: descriptions[0].Description;
 		}

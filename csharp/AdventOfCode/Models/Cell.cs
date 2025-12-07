@@ -2,7 +2,7 @@ using AdventOfCode.Interfaces;
 
 namespace AdventOfCode.Models
 {
-	public record Cell<TState, TCoord, TCoordType>
+	internal record Cell<TState, TCoord, TCoordType>
 		: ICell<TState, TCoord>
 		where TState : notnull
 		where TCoord : ICoordinate<TCoordType>

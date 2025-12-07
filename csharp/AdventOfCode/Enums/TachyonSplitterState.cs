@@ -1,6 +1,6 @@
 namespace AdventOfCode.Enums
 {
-	public enum TachyonSplitterState
+	internal enum TachyonSplitterState
 	{
 		Unknown,
 		Start,
