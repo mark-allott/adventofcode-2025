@@ -20,7 +20,7 @@ namespace AdventOfCode.Models
 		/// </summary>
 		/// <param name="x">The location in X for the coordinate</param>
 		/// <param name="y">The location in Y for the coordinate</param>
-		public Coordinate(T x, T y)
+		protected Coordinate(T x, T y)
 		{
 			X = x;
 			Y = y;
@@ -31,10 +31,10 @@ namespace AdventOfCode.Models
 		#region ICoordinate implementation
 
 		/// <inheritdoc/>
-		public T X { get; init; }
+		public required T X { get; init; }
 
 		/// <inheritdoc/>
-		public T Y { get; init; }
+		public required T Y { get; init; }
 
 		#endregion
 	}
