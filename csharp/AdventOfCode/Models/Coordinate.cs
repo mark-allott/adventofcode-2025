@@ -11,7 +11,7 @@ namespace AdventOfCode.Models
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public Coordinate()
+		private Coordinate()
 		{
 		}
 
@@ -31,10 +31,10 @@ namespace AdventOfCode.Models
 		#region ICoordinate implementation
 
 		/// <inheritdoc/>
-		public required T X { get; init; }
+		public T X { get; init; }
 
 		/// <inheritdoc/>
-		public required T Y { get; init; }
+		public T Y { get; init; }
 
 		#endregion
 	}
