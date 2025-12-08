@@ -13,7 +13,7 @@ namespace AdventOfCode.Models
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public Cell()
+		private Cell()
 		{
 		}
 
@@ -22,7 +22,7 @@ namespace AdventOfCode.Models
 		/// </summary>
 		/// <param name="location">The cell location</param>
 		/// <param name="state">The cell state</param>
-		public Cell(TCoord location, TState state)
+		protected Cell(TCoord location, TState state)
 		{
 			Location = location;
 			State = state;
@@ -33,12 +33,12 @@ namespace AdventOfCode.Models
 		#region ICell implementation
 
 		/// <inheritdoc/>
-		public required TCoord Location { get; init; }
+		public TCoord Location { get; init; }
 
 		/// <summary>
 		/// The state of the cell - could be an enum value, character, etc.
 		/// </summary>
-		public required TState State { get; set; }
+		public TState State { get; set; }
 
 		#endregion
 	}
