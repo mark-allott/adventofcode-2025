@@ -1,6 +1,6 @@
 namespace AdventOfCode.Interfaces
 {
-	public interface ICell<out TCell, out TCoord>
+	public interface ICell<out TState, out TCoord>
 	{
 		/// <summary>
 		/// The location of the cell within the parent entity
@@ -10,6 +10,6 @@ namespace AdventOfCode.Interfaces
 		/// <summary>
 		/// The cell's state
 		/// </summary>
-		TCell State { get; }
+		TState State { get; }
 	}
 }
