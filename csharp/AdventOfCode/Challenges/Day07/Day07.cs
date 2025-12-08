@@ -54,5 +54,7 @@ namespace AdventOfCode.Challenges.Day07
 		];
 
 		private const int PartOneExpected = 21;
+
+		private const int PartTwoExpected = 40;
 	}
 }
