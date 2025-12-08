@@ -6,8 +6,8 @@ namespace AdventOfCode.Models
 		public GridCoordinate(int x, int y)
 			: base(x, y)
 		{
-			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(x);
-			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(y);
+			ArgumentOutOfRangeException.ThrowIfNegative(x);
+			ArgumentOutOfRangeException.ThrowIfNegative(y);
 			ArgumentOutOfRangeException.ThrowIfGreaterThan(x, 1000);
 			ArgumentOutOfRangeException.ThrowIfGreaterThan(y, 1000);
 		}
