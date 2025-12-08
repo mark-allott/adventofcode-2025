@@ -24,6 +24,11 @@ namespace AdventOfCode.Models
 		/// </summary>
 		private readonly Func<TachyonSplitterState, char>? _cellRenderer;
 
+		/// <summary>
+		/// Create a memo store for calculating timelines
+		/// </summary>
+		private readonly Dictionary<GridCoordinate, long> _timelineMemo = [];
+
 		#endregion
 
 		#region Properties
@@ -234,5 +239,56 @@ namespace AdventOfCode.Models
 		}
 
 		#endregion
+
+		public long CalculateTimelines()
+		{
+			RunBeam();
+			return FindTimelines();
+		}
+
+		private long FindTimelines()
+		{
+			//	Find all rows with splitters that have split beams
+			var splitterRows = SplitterCells.GroupBy(g => g.Location.Y)
+				.Select(g => new { Row = g.Key, Splitters = g.Where(c => HasSplit(c)).ToList() })
+				.OrderByDescending(o => o.Row)
+				.ToList();
+
+			_ = splitterRows.SelectMany(m => m.Splitters.Select(s => FindTimelinesForCell(s)));
+			return FindTimelinesForCell(StartGridCell);
+		}
+
+		/// <summary>
+		/// Find the timeline count for the given cell
+		/// </summary>
+		/// <param name="cell">The cell being checked</param>
+		/// <returns>The number of timelines discovered</returns>
+		private long FindTimelinesForCell(TachyonSplitterGridCell cell)
+		{
+			while(true)
+			{
+				//	Shortcut: if already known, return the stored value
+				if (_timelineMemo.TryGetValue(cell.Location, out var timelines))
+					return timelines;
+
+				//	if the cell is a splitter, follow each of the new beams
+				if (cell.State.Equals(TachyonSplitterState.Splitter))
+				{
+					var beamL = this[cell.Location.X - 1, cell.Location.Y];
+					var beamR = this[cell.Location.X + 1, cell.Location.Y];
+					timelines = FindTimelinesForCell(beamL) + FindTimelinesForCell(beamR);
+					return _timelineMemo[cell.Location] = timelines;
+				}
+
+				//	If we are at the bottom of the grid, the answer is always 1 for a beam, or zero for empty
+				if (cell.Location.Y + 1 >= _bounds.Y)
+					return cell.State.Equals(TachyonSplitterState.Beam)
+						? 1
+						: 0;
+
+				//	Get the next cell down and loop
+				cell = this[cell.Location.X, cell.Location.Y + 1];
+			}
+		}
 	}
 }
