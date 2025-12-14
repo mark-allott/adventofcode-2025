@@ -38,5 +38,7 @@ namespace AdventOfCode.Challenges.Day08
 		];
 
 		private const int PartOneExpected = 40;
+
+		private const int PartTwoExpected = 25272;
 	}
 }
