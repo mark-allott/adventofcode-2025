@@ -1,13 +1,11 @@
-using System.Numerics;
-
 namespace AdventOfCode.Models
 {
-	public record PlaygroundCircuit
+	internal record PlaygroundCircuit
 	{
 		/// <summary>
 		/// Internal store for individual junction points
 		/// </summary>
-		private readonly List<Vector3> _junctionPoints = [];
+		private readonly List<SimpleLongVector3> _junctionPoints = [];
 
 		/// <summary>
 		/// Determines whether the two junction points can be added to this circuit
@@ -15,7 +13,7 @@ namespace AdventOfCode.Models
 		/// <param name="pointA">The first junction</param>
 		/// <param name="pointB">The second junction</param>
 		/// <returns>True if empty, or one junction point can connect with another already in the circuit</returns>
-		public bool CanAddJunction(Vector3 pointA, Vector3 pointB)
+		public bool CanAddJunction(SimpleLongVector3 pointA, SimpleLongVector3 pointB)
 		{
 			//	If no entries, then we can add both now
 			if (_junctionPoints.Count == 0)
@@ -32,9 +30,14 @@ namespace AdventOfCode.Models
 		/// </summary>
 		/// <param name="junction">A tuple containing the two junction points</param>
 		/// <returns>True if empty, or one junction point can connect with another already in the circuit</returns>
-		public bool CanAddJunction((Vector3 pointA, Vector3 pointB) junction)
+		public bool CanAddJunction((SimpleLongVector3 pointA, SimpleLongVector3 pointB) junction)
 		{
 			return CanAddJunction(junction.pointA, junction.pointB);
+		}
+
+		public bool CanAddJunction(JunctionsAndDistance jad)
+		{
+			return CanAddJunction(jad.PointA, jad.PointB);
 		}
 
 		/// <summary>
@@ -42,7 +45,7 @@ namespace AdventOfCode.Models
 		/// </summary>
 		/// <param name="pointA">The first junction</param>
 		/// <param name="pointB">The second junction</param>
-		public void AddJunction(Vector3 pointA, Vector3 pointB)
+		public void AddJunction(SimpleLongVector3 pointA, SimpleLongVector3 pointB)
 		{
 			//	Check if either of the points is contained in the circuit
 			var hasPointA = _junctionPoints.Contains(pointA);
@@ -62,13 +65,18 @@ namespace AdventOfCode.Models
 		/// Overload to add junction points to the circuit
 		/// </summary>
 		/// <param name="junction">A tuple of the two junction points</param>
-		public void AddJunction((Vector3 pointA, Vector3 pointB) junction)
+		public void AddJunction((SimpleLongVector3 pointA, SimpleLongVector3 pointB) junction)
 		{
 			AddJunction(junction.pointA, junction.pointB);
 		}
 
+		public void AddJunction(JunctionsAndDistance jad)
+		{
+			AddJunction(jad.PointA, jad.PointB);
+		}
+
 		/// <summary>
-		/// Yields the number of junctions contained in the cicuit
+		/// Yields the number of junctions contained in the circuit
 		/// </summary>
 		public int JunctionCount
 		{
@@ -78,8 +86,16 @@ namespace AdventOfCode.Models
 			}
 		}
 
+		public int ConnectionCount
+		{
+			get
+			{
+				return JunctionCount - 1;
+			}
+		}
+
 		/// <summary>
-		/// Static constructor that can merge two different circuit collections together
+		/// Static constructor that can merge two different circuit collections
 		/// </summary>
 		/// <param name="first">The first collection of junctions</param>
 		/// <param name="other">The other collection of junctions</param>
@@ -87,12 +103,12 @@ namespace AdventOfCode.Models
 		public static PlaygroundCircuit MergeCircuits(PlaygroundCircuit first, PlaygroundCircuit other)
 		{
 			//	Merge the two collections into a temp list
-			var circuits = new List<Vector3>(first._junctionPoints);
+			var circuits = new List<SimpleLongVector3>(first._junctionPoints);
 			circuits.AddRange(other._junctionPoints);
 
 			//	Create the new circuit collection and add the distinct elements
 			var newCircuit = new PlaygroundCircuit();
-			newCircuit._junctionPoints.AddRange(circuits.Distinct());
+			newCircuit._junctionPoints.AddRange(circuits);
 			return newCircuit;
 		}
 	}
