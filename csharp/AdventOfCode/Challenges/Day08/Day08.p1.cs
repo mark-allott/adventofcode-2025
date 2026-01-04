@@ -12,7 +12,7 @@ namespace AdventOfCode.Challenges.Day08
 		/// <inheritdoc />
 		bool IPartOne.Run()
 		{
-			var result = SolvePartOne(InputFileLines, 1000);
+			var result = SolvePartOneAlt(InputFileLines, 1000);
 			PartOneResult = $"Multiplication of 3 largest circuits = {result}";
 			return true;
 		}
@@ -20,7 +20,7 @@ namespace AdventOfCode.Challenges.Day08
 		/// <inheritdoc />
 		void IPartOneTest.Test()
 		{
-			var actual = SolvePartOne(TestInput, 10);
+			var actual = SolvePartOneAlt(TestInput, 10);
 			Debug.Assert(actual == PartOneExpected);
 		}
 
@@ -93,11 +93,11 @@ namespace AdventOfCode.Challenges.Day08
 		/// </summary>
 		/// <param name="input">The list of x, y and z locations for the junctions</param>
 		/// <returns>The junctions as <see cref="Vector3"/> equivalents</returns>
-		private static List<Vector3> CreateJunctionBoxes(IEnumerable<string> input)
+		private static List<SimpleLongVector3> CreateJunctionBoxes(IEnumerable<string> input)
 		{
 			var coords = input.ParseEnumerableOfStringToListOfListOfInt();
 			Debug.Assert(coords.All(c => c.Count == 3));
-			return coords.Select(coord => new Vector3(coord[0], coord[1], coord[2]))
+			return coords.Select(coord => new SimpleLongVector3(coord[0], coord[1], coord[2]))
 				.ToList();
 		}
 
@@ -106,16 +106,49 @@ namespace AdventOfCode.Challenges.Day08
 		/// </summary>
 		/// <param name="junctions">The list of individual junction locations</param>
 		/// <returns>A dictionary of paired junctions (as a tuple key) and the Euclidean distance between them</returns>
-		private static Dictionary<(Vector3, Vector3), float> CalculateDistances(IEnumerable<Vector3> junctions)
+		private static Dictionary<(SimpleLongVector3, SimpleLongVector3), long> CalculateDistances(
+			IEnumerable<SimpleLongVector3> junctions)
 		{
 			//	Make sure the inputs are a list to stop multiple enumeration warnings
-			var junctionPoints = (junctions ?? Enumerable.Empty<Vector3>()).ToList();
+			var junctionPoints = (junctions ?? Enumerable.Empty<SimpleLongVector3>()).ToList();
 
 			//	Shortcut the creation of the points using LINQ to iterate over them
 			return junctionPoints[..^1].SelectMany((j1, o) =>
 					junctionPoints[(o + 1)..].Select(j2 =>
-						new KeyValuePair<(Vector3, Vector3), float>((j1, j2), Vector3.Distance(j1, j2))))
+						new KeyValuePair<(SimpleLongVector3, SimpleLongVector3), long>((j1, j2),
+							SimpleLongVector3.Distance2(j1, j2))))
 				.ToDictionary();
+		}
+
+		/// <summary>
+		/// Alternate solver for part one that uses different classes to provide teh answer
+		/// </summary>
+		/// <param name="input">The list of 3D coordinates that represent the individual junctions</param>
+		/// <param name="maxConnections">The maximum number of connections to be used to solve the problem</param>
+		/// <returns>The value that represents the solution to the problem</returns>
+		private static long SolvePartOneAlt(IEnumerable<string> input, int maxConnections)
+		{
+			var x = CalculateJunctionDistances(input);
+			var circuits = x.circuits.ToList();
+			var distances = x.junctionsAndDistances.Take(maxConnections).ToList();
+
+			foreach (var distance in distances)
+			{
+				var circuitA = circuits.Single(s => s.HasJunction(distance.PointA));
+				var circuitB = circuits.Single(s => s.HasJunction(distance.PointB));
+
+				if (circuitA == circuitB)
+					continue;
+
+				circuitA.MergeWith(circuitB);
+				circuits.Remove(circuitB);
+			}
+
+			//	Grab the top 3 most connected circuits and multiply their junction counts together
+			var sum = circuits.OrderByDescending(o => o.JunctionCount)
+				.Take(3)
+				.Aggregate(1, (a, v) => a * v.JunctionCount);
+			return sum;
 		}
 	}
 }
